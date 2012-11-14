@@ -8,6 +8,7 @@ import csv;
 from string import punctuation
 import re, collections
 from string import maketrans
+from collections import *
 
 
 stop_words = []
@@ -17,21 +18,26 @@ final_list = {}
 
 def read_csv():   
     ifile  = open('test.csv', "rb")
-    reader = csv.reader(ifile)  
-    
-    counter = 0
-    tweets = []
-        
+    reader = csv.reader(ifile)
+    writer = csv.writer(open("processed.csv", "wb"))
+   
     for row in reader:
         if(len(row) < 4):
-            print len(row)
+            print row
         else:
-            tweets.append( clean_string(row[3] ))
-            print '%d ::  %s' % (counter,tweets[counter])
-            counter += 1
+            row[3] = clean_string(row[3] )
+            writer.writerow(row)
+            #print '%d ::  %s' % (counter,tweets[counter])
             
-    ifile.close()   
-    print final_list
+            
+    ifile.close()
+    fo = open("result.txt", "w")
+       
+    for temp in sorted(final_list, key=final_list.get, reverse=True):         
+        fo.write( temp + " = " + str(final_list[temp]) + "\n" )
+    
+    fo.close()
+           
 
 # remove stop words 
 # do a spell check
@@ -75,6 +81,10 @@ def known(words): return set(w for w in words if w in NWORDS)
 def correct(word):
     candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
     kevin = max(candidates, key=NWORDS.get)
+   
+    if NWORDS[kevin] == 1:
+        return ""
+        
     final_list[kevin] += 1 
     return kevin
 
@@ -86,7 +96,8 @@ def correct_string(toCorrect):
 ################# code for the spell checker ends here
 
 def play_python():   
-    print "this is   a         test".split()  
+    d = {'banana': 3, 'apple':4, 'pear': 1, 'orange': 2}    
+    print sorted(d, key=d.get, reverse=True)
 
 if __name__ == '__main__':
     
