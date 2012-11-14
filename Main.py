@@ -7,13 +7,16 @@ import nltk;
 import csv;
 from string import punctuation
 import re, collections
+from string import maketrans
+
 
 stop_words = []
 stop_words_dict = {}
 final_list = {}
 
+
 def read_csv():   
-    ifile  = open('test1.csv', "rb")
+    ifile  = open('test.csv', "rb")
     reader = csv.reader(ifile)  
     
     counter = 0
@@ -21,20 +24,25 @@ def read_csv():
         
     for row in reader:
         if(len(row) < 4):
-            print row
+            print len(row)
         else:
-            tweets.append(clean_string(row[3]))
+            tweets.append( clean_string(row[3] ))
             print '%d ::  %s' % (counter,tweets[counter])
             counter += 1
             
     ifile.close()   
     print final_list
 
-def clean_string(toClean): 
-    with_stop_words = toClean.translate(None,punctuation).lower()   
-    without_stop_words = " ".join( filter(lambda x: x not in stop_words_dict, with_stop_words.split(" ")) )
-    return correct_string(without_stop_words)
+# remove stop words 
+# do a spell check
+# return space seperated keyword
 
+def clean_string(toClean):    
+    
+    with_stop_words = toClean.translate(trantab).lower()     
+    without_stop_words = " ".join( filter(lambda x: x not in stop_words_dict, with_stop_words.split(" ")) )   
+    s =  correct_string(without_stop_words)  
+    return s
 
 #####################################################################################
 ################# code for the spell checker
@@ -67,26 +75,30 @@ def known(words): return set(w for w in words if w in NWORDS)
 def correct(word):
     candidates = known([word]) or known(edits1(word)) or known_edits2(word) or [word]
     kevin = max(candidates, key=NWORDS.get)
-    final_list[kevin] = final_list[kevin] + 1 
+    final_list[kevin] += 1 
     return kevin
 
 def correct_string(toCorrect):
-    words = toCorrect.split(" ")
+    words = toCorrect.split()
     return ' '.join(correct(word) for word in words)
 
 #####################################################################################
 ################# code for the spell checker ends here
 
-
+def play_python():   
+    print "this is   a         test".split()  
 
 if __name__ == '__main__':
     
     stop_words  =  open("stop_words.txt").read().split(",")
     stop_words_dict = collections.defaultdict(lambda: 1)
     final_list = collections.defaultdict(lambda: 1);
-       
+    trantab = maketrans(punctuation, " " * len(punctuation))
+        
     for temp in stop_words:
         stop_words_dict[temp] = 1
     
-    read_csv();   
+    read_csv()
+    #play_python()
+   
     pass
