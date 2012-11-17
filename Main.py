@@ -98,6 +98,15 @@ def correct_string(toCorrect):
 def play_python():   
     d = {'banana': 3, 'apple':4, 'pear': 1, 'orange': 2}    
     print sorted(d, key=d.get, reverse=True)
+    
+def load_result():
+    lst =  map(lambda x:x.strip().split(" = "),open("result.txt").readlines())
+    t = {}
+    for r in lst:
+       if(int(r[1]) > 1000):
+           t[r[0]] = int(r[1])
+        
+    print t
 
 if __name__ == '__main__':
     
@@ -109,7 +118,8 @@ if __name__ == '__main__':
     for temp in stop_words:
         stop_words_dict[temp] = 1
     
-    read_csv()
+    #read_csv()
     #play_python()
+    load_result()
    
     pass
