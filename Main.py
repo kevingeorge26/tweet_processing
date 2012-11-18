@@ -5,6 +5,7 @@ Created on Nov 11, 2012
 '''
 import nltk;
 import csv;
+import sqlite3
 from string import punctuation
 import re, collections
 from string import maketrans
@@ -98,15 +99,46 @@ def correct_string(toCorrect):
 def play_python():   
     d = {'banana': 3, 'apple':4, 'pear': 1, 'orange': 2}    
     print sorted(d, key=d.get, reverse=True)
-    
+
+# load filter and put only those lines in the database
+# that has the keyword
+
 def load_result():
-    lst =  map(lambda x:x.strip().split(" = "),open("result.txt").readlines())
+    lst =  map(lambda x:x.strip().split(" = "),open("filters.txt").readlines())
     t = {}
-    for r in lst:
-       if(int(r[1]) > 1000):
-           t[r[0]] = int(r[1])
+   
+    for r in lst:      
+        t[r[0]] = int(r[1])
         
-    print t
+    conn = sqlite3.connect('example.db')
+    conn.text_factory = str
+    
+    ifile  = open('test.csv', "rb")
+    reader = csv.reader(ifile)
+    counter = 0  
+    for row in reader:
+        for keyword in row[3].split(" "):
+            if keyword in t:
+                counter +=1
+                val = [ (counter,row[0], row[1], row[2].split(" ")[0], row[2].split(" ")[1] ,row[3]) ]
+                print row
+                conn.executemany("INSERT INTO tweet (id,userid, datetime,lat,long,keywords) VALUES (?,?,?,?,?,?)",val);
+               
+                break;
+    
+    conn.commit()
+    conn.close()
+
+    
+    
+    
+def create_table():
+    conn = sqlite3.connect('example.db')
+    val = (1,"5/18/2011 13:26",10,12,"keywordsssss")
+    conn.executemany("INSERT INTO tweet VALUES (?,?,?,?,?)",[val]);
+    conn.commit()
+    conn.close()
+
 
 if __name__ == '__main__':
     
@@ -121,5 +153,6 @@ if __name__ == '__main__':
     #read_csv()
     #play_python()
     load_result()
+    #create_table()
    
     pass

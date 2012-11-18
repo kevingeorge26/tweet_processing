@@ -27,7 +27,8 @@ burn = 1545
 body = 3482
 bedridden = 1346
 sickness = 962
-coughing 841
+upset = 883
+coughing = 841
 nausea = 815
 cancer = 813
 hurting = 792
@@ -48,4 +49,6 @@ illness = 191
 vomit = 103
 freeze = 34
 coughed = 14
+bile = 20
+ulcers = 49
 feverish = 15
